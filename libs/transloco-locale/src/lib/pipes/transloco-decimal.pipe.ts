@@ -31,12 +31,29 @@ export class TranslocoDecimalPipe
    * 1234567890 | translocoDecimal: {useGrouping: false}: en-US // 1234567890
    *
    */
+  // overloads for strict mode
   transform(
-    value: string | number,
+    value: number | string,
+    numberFormatOptions?: NumberFormatOptions,
+    locale?: Locale
+  ): string;
+  transform<T extends null | undefined>(
+    value: T,
+    numberFormatOptions?: NumberFormatOptions,
+    locale?: Locale
+  ): T;
+  transform<T extends null | undefined>(
+    value: number | string | T,
+    numberFormatOptions?: NumberFormatOptions,
+    locale?: Locale
+  ): string | T;
+
+  transform(
+    value?: string | number | null,
     numberFormatOptions: NumberFormatOptions = {},
     locale?: Locale
-  ): string {
-    if (isNil(value)) return '';
+  ): string | null | undefined {
+    if (isNil(value)) return value;
     locale = this.getLocale(locale);
 
     const options = {
