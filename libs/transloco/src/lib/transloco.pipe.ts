@@ -46,15 +46,18 @@ export class TranslocoPipe implements PipeTransform, OnDestroy {
     this.scopeResolver = new ScopeResolver(this.service);
   }
 
-  // null is for handling strict mode + async pipe types https://github.com/jsverse/transloco/issues/311
-  // null is for handling strict mode + optional chaining types https://github.com/jsverse/transloco/issues/488
+  // overloads for strict mode
+  transform(key: string, params?: HashMap, inlineLang?: string): string;
+  transform<T extends null | undefined>(key: T, params?: HashMap, inlineLang?: string): T;
+  transform<T extends null | undefined>(key: string | T, params?: HashMap, inlineLang?: string): string | T;
+
   transform(
     key?: string | null,
     params?: HashMap,
     inlineLang?: string
-  ): string {
+  ): string | null | undefined {
     if (!key) {
-      return key as any;
+      return key;
     }
 
     const keyName = params ? `${key}${JSON.stringify(params)}` : key;

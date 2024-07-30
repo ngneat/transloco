@@ -12,6 +12,8 @@ import {
 
 import { BaseLocalePipe } from './base-locale.pipe';
 
+type CurrencyDisplayType = 'code' | 'symbol' | 'narrowSymbol' | 'name';
+
 @Pipe({
   name: 'translocoCurrency',
   pure: false,
@@ -35,14 +37,37 @@ export class TranslocoCurrencyPipe
    * 1000000 | translocoCurrency: 'narrowSymbol' : {minimumFractionDigits: 0 } : CAD // $1,000,000
    *
    */
+  // overloads for strict mode
   transform(
     value: number | string,
-    display: 'code' | 'symbol' | 'narrowSymbol' | 'name' = 'symbol',
+    display?: CurrencyDisplayType,
+    numberFormatOptions?: NumberFormatOptions,
+    currencyCode?: Currency,
+    locale?: Locale
+  ): string;
+  transform<T extends null | undefined>(
+    value: T,
+    display?: CurrencyDisplayType,
+    numberFormatOptions?: NumberFormatOptions,
+    currencyCode?: Currency,
+    locale?: Locale
+  ): T;
+  transform<T extends null | undefined>(
+    value: number | string | T,
+    display?: CurrencyDisplayType,
+    numberFormatOptions?: NumberFormatOptions,
+    currencyCode?: Currency,
+    locale?: Locale
+  ): string | T;
+
+  transform(
+    value?: number | string | null,
+    display: CurrencyDisplayType = 'symbol',
     numberFormatOptions: NumberFormatOptions = {},
     currencyCode?: Currency,
     locale?: Locale
-  ): string {
-    if (isNil(value)) return '';
+  ): string | null | undefined {
+    if (isNil(value)) return value;
     locale = this.getLocale(locale);
 
     const options = {
